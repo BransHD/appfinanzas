@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 //const db = require('../config/database');
-
+/*
 router.get('/', (req, res) => {
   db.all(
     `SELECT e.*, c.name as category_name 
@@ -39,5 +39,6 @@ router.post('/', (req, res) => {
     }
   );
 });
+*/
 
 module.exports = router;

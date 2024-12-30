@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 //const db = require('../config/database');
 
+/*
 router.get('/', (req, res) => {
   db.all('SELECT * FROM income ORDER BY date DESC', [], (err, rows) => {
     if (err) {
@@ -25,6 +26,6 @@ router.post('/', (req, res) => {
       res.redirect('/income');
     }
   );
-});
+});*/
 
 module.exports = router;

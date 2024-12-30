@@ -1,180 +1,208 @@
 <%- contentFor('content') %>
 
-<!-- Stats Cards -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card stats-card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0">Balance General</h6>
-                        <h2 class="my-2">$<%= totals.balance.toLocaleString() %></h2>
-                        <p class="mb-0">Balance del mes actual</p>
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stats-card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Balance General</h6>
+                            <h2 class="my-2">$<%= totals.balance.toLocaleString() %>
+                            </h2>
+                            <p class="mb-0">Balance del mes actual</p>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
                     </div>
-                    <div class="stats-icon">
-                        <i class="fas fa-balance-scale"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stats-card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Ingresos Totales</h6>
+                            <h2 class="my-2">$<%= totals.monthlyIncome.toLocaleString() %>
+                            </h2>
+                            <p class="mb-0">Ingresos del mes actual</p>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-money-bill-trend-up"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stats-card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Gastos Totales</h6>
+                            <h2 class="my-2">$<%= totals.monthlyExpenses.toLocaleString() %>
+                            </h2>
+                            <p class="mb-0">Gastos del mes actual</p>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card stats-card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0">Ingresos Totales</h6>
-                        <h2 class="my-2">$<%= totals.monthlyIncome.toLocaleString() %></h2>
-                        <p class="mb-0">Ingresos del mes actual</p>
-                    </div>
-                    <div class="stats-icon">
-                        <i class="fas fa-money-bill-trend-up"></i>
+
+    <!-- Charts -->
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Balance Anual</h5>
+                    <canvas id="balanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gastos por Categoría</h5>
+                    <canvas id="expensesByCategoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Últimas Transacciones</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% latestTransactions.forEach(function(transaction) { %>
+                                    <tr>
+                                        <td>
+                                            <%= transaction.date %>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge <%= transaction.type === 'Ingreso' ? 'bg-success' : 'bg-danger' %>">
+                                                <%= transaction.type %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <%= transaction.description %>
+                                        </td>
+                                        <td
+                                            class="<%= transaction.type === 'Ingreso' ? 'text-success' : 'text-danger' %>">
+                                            <%= transaction.type==='Ingreso' ? '+' : '-' %>$<%=
+                                                    transaction.amount.toLocaleString() %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card stats-card bg-danger text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title mb-0">Gastos Totales</h6>
-                        <h2 class="my-2">$<%= totals.monthlyExpenses.toLocaleString() %></h2>
-                        <p class="mb-0">Gastos del mes actual</p>
-                    </div>
-                    <div class="stats-icon">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <script>
 
-<!-- Charts -->
-<div class="row">
-    <div class="col-md-8 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Balance Anual</h5>
-                <canvas id="balanceChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Gastos por Categoría</h5>
-                <canvas id="expensesByCategoryChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
+        const monthlyData1 = {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            income: [3500, 3500, 4200, 3800, 4000, 4500, 4200, 4800, 4300, 4600, 4400, 5000],
+            expenses: [2800, 2600, 3100, 2900, 3200, 3400, 3100, 3600, 3300, 3500, 3400, 3800]
+        };
 
-<div class="row">
-    <div class="col-12 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Últimas Transacciones</h5>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
-                                <th>Descripción</th>
-                                <th>Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% latestTransactions.forEach(function(transaction) { %>
-                            <tr>
-                                <td><%= transaction.date %></td>
-                                <td>
-                                    <span class="badge <%= transaction.type === 'Ingreso' ? 'bg-success' : 'bg-danger' %>">
-                                        <%= transaction.type %>
-                                    </span>
-                                </td>
-                                <td><%= transaction.description %></td>
-                                <td class="<%= transaction.type === 'Ingreso' ? 'text-success' : 'text-danger' %>">
-                                    <%= transaction.type === 'Ingreso' ? '+' : '-' %>$<%= transaction.amount.toLocaleString() %>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        const categoryData1 = {
+            labels: ['Alimentos', 'Vivienda', 'Transporte', 'Entretenimiento', 'Salud', 'Educación'],
+            data: [800, 1200, 400, 300, 500, 600],
+            colors: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)'
+            ]
+        };
 
-<%- contentFor('scripts') %>
-<script>
-    const monthlyData = <%- JSON.stringify(monthlyData) %>;
-    const categoryData = <%- JSON.stringify(categoryData) %>;
+        const monthlyData = JSON.stringify(monthlyData1);
+        const categoryData = JSON.stringify(categoryData1);
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Balance Chart
-        new Chart(document.getElementById('balanceChart'), {
-            type: 'line',
-            data: {
-                labels: monthlyData.labels,
-                datasets: [{
-                    label: 'Ingresos',
-                    data: monthlyData.income,
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }, {
-                    label: 'Gastos',
-                    data: monthlyData.expenses,
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Balance Chart
+            new Chart(document.getElementById('balanceChart'), {
+                type: 'line',
+                data: {
+                    labels: monthlyData.labels,
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: monthlyData.income,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Gastos',
+                        data: monthlyData.expenses,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return '$' + value.toLocaleString();
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // Expenses by Category Chart
-        new Chart(document.getElementById('expensesByCategoryChart'), {
-            type: 'doughnut',
-            data: {
-                labels: categoryData.labels,
-                datasets: [{
-                    data: categoryData.data,
-                    backgroundColor: categoryData.colors
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+            // Expenses by Category Chart
+            new Chart(document.getElementById('expensesByCategoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.labels,
+                    datasets: [{
+                        data: categoryData.data,
+                        backgroundColor: categoryData.colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>

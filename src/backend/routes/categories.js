@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 //const db = require('../config/database');
 
-router.get('/', (req, res) => {
+/*router.get('/', (req, res) => {
   db.all('SELECT * FROM categories', [], (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
@@ -22,5 +22,5 @@ router.post('/', (req, res) => {
     res.redirect('/categories');
   });
 });
-
+*/
 module.exports = router;
