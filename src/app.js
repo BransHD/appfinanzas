@@ -11,13 +11,14 @@ const Sequelize = require('sequelize');
 const MSSQLStore = require('express-session-sequelize')(session.Store);
 const { isLoggedIn } = require('./backend/config/lib/auth');
 
+const { create } = require('express-handlebars');
+
 const app = express();
 
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 app.use('/css', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/css')));
 app.use('/js', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/js')));
 app.use('/charts', express.static(path.join(__dirname, '../node_modules/chart.js/dist')));
@@ -33,17 +34,16 @@ app.set('view engine', 'ejs');
 app.set('layout', 'layouts/main'); //nombre del archivo por defecto que se cargara
 
 // Archivos estáticos
-app.use(express.static(path.join(__dirname, 'frontend', 'public')));
-
 app.use(
   session({
-    secret: 'secret', // Clave utilizada para firmar la cookie de la sesión. Debe ser única y segura.
+    secret: process.env.KeySession, // Clave utilizada para firmar la cookie de la sesión. Debe ser única y segura.
     resave: false, // Evita guardar la sesión en el store si no ha sido modificada durante la solicitud.
     saveUninitialized: false, // No guarda sesiones que no hayan sido inicializadas (sin datos).
     cookie: {
-      maxAge: 43200000 // Duración de la cookie en milisegundos (12 horas). Después de este tiempo, la sesión expira.
+      maxAge: 43200000, // Duración de la cookie en milisegundos (12 horas). Después de este tiempo, la sesión expira.
     },
-    store: new MSSQLStore({ // Almacena las sesiones en una base de datos SQL Server.
+    store: new MSSQLStore({
+      // Almacena las sesiones en una base de datos SQL Server.
       db: new Sequelize( // Configuración de Sequelize para conectarse a la base de datos.
         process.env.DB_NAME, // Nombre de la base de datos.
         process.env.DB_USER, // Usuario para acceder a la base de datos.
@@ -55,28 +55,26 @@ app.use(
           dialectOptions: {
             options: {
               encrypt: true, // Indica si la conexión debe ser encriptada.
-              trustServerCertificate: true // Si debe confiar en certificados no verificados.
-            }
+              trustServerCertificate: true, // Si debe confiar en certificados no verificados.
+            },
           },
-          logging: false // Desactiva el registro de consultas SQL en la consola.
+          logging: false, // Desactiva el registro de consultas SQL en la consola.
         }
       ),
       checkExpirationInterval: 15 * 60 * 1000, // Cada 15 minutos (en milisegundos), verifica las sesiones expiradas y las elimina.
-      expiration: 24 * 60 * 60 * 1000 // Las sesiones almacenadas expiran después de 24 horas.
-    })
+      expiration: 24 * 60 * 60 * 1000, // Las sesiones almacenadas expiran después de 24 horas.
+    }),
   })
 );
-
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
-
-
-// Routes
+// Rutas dinamicas
 app.use('/', require('./backend/routes/configuracion'));
-
+app.use('/', require('./backend/routes/categories'));
 app.listen(app.get('port'), () => {
   console.log('Server on port', process.env.PORT);
 });

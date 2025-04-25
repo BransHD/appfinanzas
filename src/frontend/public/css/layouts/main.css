@@ -35,3 +35,16 @@
     font-size: 2.5rem;
     opacity: 0.8;
 }
+
+.jm-loadingpage {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 999999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }

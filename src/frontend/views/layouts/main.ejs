@@ -1,35 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
+<%- include('../partials/head') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanzas Personales</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/layouts/main.css">
-</head>
-
-<body>
+  <body>
     <div class="d-flex">
-        <%- include('../partials/sidebar') %>
-            <div class="content flex-grow-1">
-                <%- include('../partials/header') %>
-                    <div class="container-fluid p-4">
-                        <%- content %>
-                    </div>
-                    <%- include('../partials/footer') %>
+      <%- include('../partials/sidebar') %>
+        <div class="content flex-grow-1">
+          <%- include('../partials/header') %>
+            <div class="container-fluid p-4" style="height: 86vh;">
+              <main id="contenedorprincipal" class="d-flex flex-column align-items-center"
+                style="max-height: 88vh; overflow-y: auto;"></main>
             </div>
-    </div>
+            <%- include('../partials/footer') %>
+        </div>
 
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/charts/chart.umd.js"></script>
-    <script>
-        document.getElementById('sidebarToggle').addEventListener('click', function () {
+        <script src="/charts/chart.umd.js"></script>
+        <script src="/js/script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.sidebar a.menulink').forEach((link) => {
+              link.addEventListener('click', async function (e) {
+                e.preventDefault();
+
+                const ruta = this.getAttribute('href');
+                const contenedorprincipal = document.getElementById('contenedorprincipal');
+                contenedorprincipal.innerHTML = `
+                  <div class="jm-loadingpage">
+                      <lottie-player src="/img/jsonimg/CargaOsito.json" class="" background="transparent" speed="1"
+                      style="width: 250px; height: 250px;" loop autoplay></lottie-player>
+                  </div>`;
+
+                try {
+                  const response = await axios.get(ruta);
+                  setTimeout(async () => {
+                    contenedorprincipal.style.opacity = 0;
+                    contenedorprincipal.innerHTML = response.data;
+                    await cargarYEjecutarScriptsModulares(contenedorprincipal);  // Ejecutar los scripts modulares
+                    contenedorprincipal.style.opacity = 1;
+                  }, 500);
+                } catch (error) {
+                  console.error(error);
+                  contenedorprincipal.innerHTML = `
+                    <div class="container">
+                      <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                          <div class="text-center mt-4">
+                            <img class="mb-4 img-error" src="/img/404logo.jpg" />
+                            <p class="lead">Esta URL solicitada no se encontró en este servidor.</p>
+                            <a href="/">
+                              <i class="fas fa-arrow-left me-1"></i> Regresar
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+                }
+              });
+            });
+
+            // Permitir navegación con el botón "atrás" del navegador
+            window.addEventListener('popstate', () => {
+              fetch(location.pathname)
+                .then((response) => response.text())
+                .then((html) => {
+                  const contenedorprincipal = document.getElementById('contenedorprincipal');
+
+                  // Oculta el contenido actual
+                  contenedorprincipal.style.opacity = 0;
+
+                  setTimeout(() => {
+                    // Inserta el nuevo contenido
+                    contenedorprincipal.innerHTML = html;
+
+                    // Muestra el nuevo contenido con desvanecimiento
+                    contenedorprincipal.style.opacity = 1;
+                  }, 500); // Espera 500ms para la animación de desvanecimiento
+                });
+            });
+          });
+
+          document.getElementById('sidebarToggle').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('collapsed');
-        });
-    </script>
-    <%- typeof scripts !=='undefined' ? scripts : '' %>
-</body>
+          });
+
+
+          async function cargarYEjecutarScriptsModulares(contenedor) {
+            const scripts = contenedor.querySelectorAll('script[type="module"]');
+            for (let script of scripts) {
+              const modulePath = script.src;
+              if (modulePath) {
+                try {
+                  const scriptModule = await import(modulePath);  // Cargar el módulo dinámicamente
+                  console.log(`Módulo cargado: ${modulePath}`);
+                  // Ahora puedes ejecutar funciones del módulo, si es necesario
+                  // scriptModule.nombreDeLaFuncion();
+                } catch (error) {
+                  console.error(`Error cargando el módulo: ${modulePath}`, error);
+                }
+              }
+            }
+          }
+        </script>
+  </body>
 
 </html>

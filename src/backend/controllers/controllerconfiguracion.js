@@ -1,4 +1,4 @@
-const { getConnection } = require('../config/db/conexionsqlserver');
+const { getConnection } = require('../config/db/conexionsqualize');
 const passport = require('passport');
 //const helpers = require('../config/utils/helpers');
 const path = require('path');

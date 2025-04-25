@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const controllerRE = require('../controllers/controllerrender');
+const controllerCategory = require('../controllers/controllercategory');
 //const db = require('../config/database');
 
 /*router.get('/', (req, res) => {
@@ -23,4 +25,6 @@ router.post('/', (req, res) => {
   });
 });
 */
+router.get('/category', controllerRE.rendercategory);
+router.post('/ins_category', controllerCategory.postcategory);
 module.exports = router;
