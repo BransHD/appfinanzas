@@ -9,6 +9,7 @@ const passport = require('passport');
 const session = require('express-session');
 const Sequelize = require('sequelize');
 const MSSQLStore = require('express-session-sequelize')(session.Store);
+const fs = require('fs');
 const { isLoggedIn } = require('./backend/config/lib/auth');
 
 const { create } = require('express-handlebars');
@@ -22,6 +23,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/css', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/css')));
 app.use('/js', express.static(path.join(__dirname, '../node_modules/bootstrap/dist/js')));
 app.use('/charts', express.static(path.join(__dirname, '../node_modules/chart.js/dist')));
+
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'logserver.log'),
+  { flags: 'a' } // 'a' = append, para que no sobreescriba
+);
+app.use(morgan('combined', { stream: accessLogStream }));
 
 require('./backend/config/lib/passport');
 

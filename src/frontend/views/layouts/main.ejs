@@ -25,6 +25,7 @@
 
                 const ruta = this.getAttribute('href');
                 const contenedorprincipal = document.getElementById('contenedorprincipal');
+                contenedorprincipal.innerHTML = '';
                 contenedorprincipal.innerHTML = `
                   <div class="jm-loadingpage">
                       <lottie-player src="/img/jsonimg/CargaOsito.json" class="" background="transparent" speed="1"
@@ -86,19 +87,37 @@
 
 
           async function cargarYEjecutarScriptsModulares(contenedor) {
-            const scripts = contenedor.querySelectorAll('script[type="module"]');
-            for (let script of scripts) {
-              const modulePath = script.src;
-              if (modulePath) {
+            // Buscar TODOS los scripts dentro del contenido cargado
+            const scripts = contenedor.querySelectorAll("script");
+
+            for (let oldScript of scripts) {
+              const newScript = document.createElement("script");
+
+              // Copiar todos los atributos (src, type, etc.)
+              [...oldScript.attributes].forEach(attr =>
+                newScript.setAttribute(attr.name, attr.value)
+              );
+
+              // Si es inline script, copiar su contenido
+              if (!oldScript.src) {
+                newScript.textContent = oldScript.textContent;
+              }
+
+              // Si es type="module" y tiene src → usar import para evitar caché
+              if (newScript.type === "module" && newScript.src) {
                 try {
-                  const scriptModule = await import(modulePath);  // Cargar el módulo dinámicamente
-                  console.log(`Módulo cargado: ${modulePath}`);
-                  // Ahora puedes ejecutar funciones del módulo, si es necesario
-                  // scriptModule.nombreDeLaFuncion();
-                } catch (error) {
-                  console.error(`Error cargando el módulo: ${modulePath}`, error);
+                  // El query aleatorio evita que use caché
+                  const cacheBuster = `?v=${Date.now()}`;
+                  await import(newScript.src + cacheBuster);
+                  continue; // Ya no lo añadimos al DOM, porque import() lo ejecuta
+                } catch (err) {
+                  console.error(`Error importando módulo: ${newScript.src}`, err);
+                  continue;
                 }
               }
+
+              // Agregarlo al DOM para que el navegador lo ejecute
+              document.body.appendChild(newScript);
             }
           }
         </script>

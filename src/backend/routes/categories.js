@@ -26,5 +26,8 @@ router.post('/', (req, res) => {
 });
 */
 router.get('/category', controllerRE.rendercategory);
-router.post('/ins_category', controllerCategory.postcategory);
+router.get('/Allcategory', controllerCategory.getAllCategories);
+router.post('/category', controllerCategory.postcategory);
+router.put('/category/:id', controllerCategory.postcategory);
+router.delete('/category/:id', controllerCategory.postcategory);
 module.exports = router;

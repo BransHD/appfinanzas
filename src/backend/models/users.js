@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db/conexionsqualize');
+const connectionDB = require('../config/db/conexionsqualize');
 
-const User = sequelize.define(
+const User = connectionDB.define(
   'User',
   {
     id_user: {
