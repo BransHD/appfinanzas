@@ -68,12 +68,13 @@ document.getElementById('btnGuardar').addEventListener('click', function () {
 });
 function postCategory() {
   const nomb_cater = document.getElementById('nomb_cater');
+  const ran_limit = document.getElementById('ran_limit');
   const desc_cater = document.getElementById('desc_cater');
-
   axios
     .post('/category', {
       id_cater: 0,
       nomb_cater: nomb_cater.value,
+      ran_limit : ran_limit.value,
       desc_cater: desc_cater.value,
     })
     .then(function (result) {

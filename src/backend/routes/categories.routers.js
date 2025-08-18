@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controllerRE = require('../controllers/controllerrender');
-const controllerCategory = require('../controllers/controllercategory');
+const controllerCategory = require('../controllers/category.controller');
 //const db = require('../config/database');
 
 /*router.get('/', (req, res) => {
