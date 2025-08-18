@@ -1,5 +1,5 @@
 (function getAllCategories() {
-  axios.get('/Allcategory').then(function (result) {
+  axios.get('/api/categories').then(function (result) {
     const resultado = result.data;
     if (resultado.icono === 'success') {
       let cardscategorias = document.getElementById('cardscategorias');
@@ -71,10 +71,10 @@ function postCategory() {
   const ran_limit = document.getElementById('ran_limit');
   const desc_cater = document.getElementById('desc_cater');
   axios
-    .post('/category', {
+    .post('/api/categories', {
       id_cater: 0,
       nomb_cater: nomb_cater.value,
-      ran_limit : ran_limit.value,
+      ran_limit: ran_limit.value,
       desc_cater: desc_cater.value,
     })
     .then(function (result) {

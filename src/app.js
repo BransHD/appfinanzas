@@ -81,7 +81,7 @@ app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
 // Rutas dinamicas
 app.use('/', require('./backend/routes/configuracion'));
-app.use('/', require('./backend/routes/categories'));
+app.use('/', require('./backend/routes/category.routers'));
 app.listen(app.get('port'), () => {
   console.log('Server on port', process.env.PORT);
 });

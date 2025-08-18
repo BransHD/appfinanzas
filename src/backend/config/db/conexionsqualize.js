@@ -12,11 +12,12 @@ const connectionDB = new Sequelize(process.env.DB_NAME, process.env.DB_USER, pro
       trustServerCertificate: true,
     },
   },
-  logging: (msg) => {
+  logging: false,
+  /*logging: (msg) => {
     if (msg.startsWith('Executing')) {
       console.log(msg);
     }
-  },
+  },*/
 });
 
 module.exports = connectionDB;
