@@ -40,8 +40,7 @@ module.exports = {
   async createCategory(req, res) {
     try {
       const { nomb_cater, desc_cater, ran_limit } = req.body;
-      
-      
+
       const result = await createCategoriesService({
         nomb_cater,
         desc_cater,
